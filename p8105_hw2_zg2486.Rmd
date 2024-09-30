@@ -4,4 +4,81 @@ output: github_document
 date: "2024-09-27"
 ---
 
+# Problem 1
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+1. Read and clean the data, select and convert variables.
+```{r}
+subway_df = 
+  read_csv(
+    "./NYC_Transit_Subway_Entrance_And_Exit_Data.csv", 
+    na = c("NA", "", ".")) %>% 
+  janitor::clean_names() %>% 
+  select(line:entry, vending, ada) %>% 
+  mutate(
+    entry = case_match(
+      entry,
+     "YES" ~ TRUE,
+     "NO" ~ FALSE)
+    ) %>% 
+  group_by(station_name) %>% 
+  distinct(line) 
+```
+
+Variables included in this dataset are: line, station name, station latitude, station longitude, served routes (route 1 - 11), entry, vending, entrance type, and ADA compliance. I used `janitor::clean_names` to clean up column names of data after importing data file with specifying missing values, then retained 19 required variables by `select` function, lastly, converted entry variable from character to logical variable by `mutate(case_match)` function. There are 1,868 rows and 19 columns.These data are not tidy yet.
+
+
+```{r eval=FALSE}
+distinct_station = group_by(subway_df, station_name) %>% 
+  distinct(line) 
+
+view(distinct_station)
+  
+ada_distinct_station = filter(subway_df, ada == TRUE) %>% 
+   group_by(station_name) %>% 
+  distinct(line)
+
+list(ada_distinct_station)
+```
+
+There are 465 distinct stations and 84 stations are ADA compliant.
+
+
+
+# Problem 2
+```{r}
+mr_df = read_excel("./202309 Trash Wheel Collection Data.xlsx",
+                      sheet = "Mr. Trash Wheel", na = c("NA", "", "."),
+                   ) %>% 
+  select(-starts_with("...")) %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster)) %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate(sports_balls = as.integer(sports_balls)) %>% 
+  mutate(name = "Mr") 
+
+professor_df = read_excel("./202309 Trash Wheel Collection Data.xlsx",
+                          sheet = "Professor Trash Wheel", na = c("NA", "", ".")
+                          ) %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster)) %>% 
+  mutate(name = "Professor")
+
+gwynnda_df = read_excel("./202309 Trash Wheel Collection Data.xlsx",
+                      sheet = "Gwynnda Trash Wheel", na = c("NA", "", ".")
+                      ) %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster)) %>% 
+  mutate(name = "Gwynnda")
+
+  
+```
+
+
+
+
 
