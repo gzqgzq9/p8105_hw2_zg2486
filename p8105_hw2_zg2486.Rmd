@@ -57,6 +57,33 @@ proportion_entry = entrance_allow / no_vending
 ```
 There are 465 distinct stations and 84 stations are ADA compliant.The proportion of station entrances / exits without vending allow entrance is 43.43%.
 
+3. Reformat data.
+```{r}
+str(subway_df)
+
+reformat_df = subway_df %>%
+  mutate(route8 = as.character(route8)) %>% 
+  mutate(route9 = as.character(route9)) %>% 
+  mutate(route10 = as.character(route10)) %>% 
+  mutate(route11 = as.character(route11)) %>% 
+  pivot_longer(
+    route1:route9,
+    names_to = "route_number",
+    values_to = "route_name")
+
+a_train = filter(reformat_df, route_name == "A") %>% 
+  group_by(station_name) %>% 
+  distinct(line) %>% 
+  nrow()
+
+
+ada_a_train = filter(reformat_df, ada == TRUE) %>% 
+  filter(route_name == "A") %>% 
+  group_by(station_name) %>% 
+  distinct(line) %>% 
+  nrow()
+```
+There are 60 distinct stations serve the A train. There are 17 ADA compliant of the stations that serve the A train.
 
 
 
