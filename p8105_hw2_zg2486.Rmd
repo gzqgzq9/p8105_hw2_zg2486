@@ -88,7 +88,8 @@ There are 60 distinct stations serve the A train. There are 17 ADA compliant of 
 
 
 # Problem 2
-```{r}
+
+```{r message = FALSE}
 mr_df = 
   read_excel("./202409 Trash Wheel Collection Data.xlsx",
              sheet = "Mr. Trash Wheel", na = c("NA", "", "."),
@@ -132,19 +133,19 @@ total_number =
   summarise(total_number = sum(cigarette_butts))
 
 ```
-There are total 1,033 observations in the combined dataset, the key variables include date, weight_tons, volume_cubic_yards, plastic_bottles, and wrappers, ect. The total weight of trash collected by Professor Trash Wheel is 246.74 tons. There total number of cigarette butts collected by Gwynda in June of 2022 are 18,120.
+There are total `1,033` observations in the combined dataset, the key variables include date, weight_tons, volume_cubic_yards, plastic_bottles, and wrappers, ect. The total weight of trash collected by Professor Trash Wheel is `246.74` tons. There total number of cigarette butts collected by Gwynda in June of 2022 are `18,120`.
 
-select(litters_df, litter_number, everything())
+
 
 # Problem 3
-1. Import and clean data.
-```{r}
+
+```{r eval = FALSE}
 bakers_df = 
   read.csv("./gbb_datasets/bakers.csv", 
            na = c("NA", "", ".")) %>% 
   janitor::clean_names() %>% 
   mutate(baker = word(baker_name, 1)) %>% 
-  select(-baker_name) %>% 
+  select(-baker_name) 
   
 bakes_df = 
   read.csv("./gbb_datasets/bakes.csv",
@@ -156,40 +157,56 @@ results_df =
            na = c("NA", "", "."),
            skip = 2) %>% 
   janitor::clean_names() 
-```
 
-2. Check vairable types and completeness and correctness across datasets. 
-```{r}
 str(bakers_df)
 str(bakes_df)
 str(results_df)
+
+results_bakers_df = 
+  anti_join(bakers_df,results_df, by = c("series", "baker" ))
 
 bakers_results_df =
   anti_join(results_df, bakers_df, by = c("series", "baker" ))
 
 bakers_results = left_join(results_df, bakers_df, by = c("series", "baker" ))
 
-final_df = 
+final_df1 = 
+  anti_join(bakers_results, bakes_df, by = c("series", "baker", "episode"))
+  
+final_df2 = 
   anti_join(bakes_df, bakers_results, by = c("series", "baker", "episode"))
-```
 
-3. Merge to create a final dataset and organize variables' order.
-```{r}
 final = 
   left_join(bakers_results, bakes_df, by = c("series", "baker", "episode")) 
 
 write_csv(final, "./gbb_datasets/final.csv")
 ```
+I first use `clean_names` function to clean three data frames, and when we check the variable names of three data frames, we see there is a variable called `baker_name` that includes the full name of the contestants in baker_df instead of `baker`that only includes first name in other two data frame, which will hinder the merging of three data frames, so we will use `mutate` function to convert full name to first name and use `select` remove the full name column. Next, I use `str()` to check the variable types before merging and make sure variables would be merged are in the same type. I `anti_join` the bakers_df and results_df first to check missing data, and then use `left_join` to merge these two data frames. And then check the missing data in bakers_results_df and bakes_df, and then merge them to get final data frame that contains 3 data files. The final data frame include `1,136` observations and `10` variables. 
+
+```{r=win}
+win_table = final %>% 
+  filter(result == "STAR BAKER" | result == "WINNER") %>% 
+  filter(series %in% c("5", "6", "7", "8", "9", "10")) %>% 
+  select(- c(baker_occupation, hometown, signature_bake, show_stopper))
+```
+The winners have very high technical rank and they usually win the star baker in several episodes in that season.But surprisingly, David, the winner in season 10 never won star baker before. 
 
 
 
+```{r}
+viewers_df = read.csv("./gbb_datasets/viewers.csv",
+                      na = c("NA", "", ".")) %>% 
+  janitor::clean_names() %>% 
+  head(10)
 
+mean_s1 = mean(viewers_df[, 2], na.rm = TRUE)
 
+mean_s5 = mean(viewers_df[, 6], na.rm = TRUE)
+```
+The average viewership is `2.77` in Season 1 and `10.0393` in Season 5. 
 
+ 
 
-
-
-write_csv(final_df, "final_bakeoff_data.csv")
 
 
 
