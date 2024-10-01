@@ -28,7 +28,7 @@ subway_df =
     ) 
 ```
 
-Variables included in this dataset are: line, station name, station latitude, station longitude, served routes (route 1 - 11), entry, vending, entrance type, and ADA compliance. I used `janitor::clean_names` to clean up column names of data after importing data file with specifying missing values, then retained 19 required variables by `select` function, lastly, converted entry variable from character to logical variable by `mutate(case_match)` function. There are 1,868 rows and 19 columns.These data are not tidy yet.
+Variables included in this dataset are: `line`, `station name`, `station latitude`, `station longitude`, `served routes (route 1 - 11)`, `entry`, `vending`, `entrance type`, and `ADA compliance`. I used `janitor::clean_names` to clean up column names of data after importing data file with specifying missing values, then retained `19` required variables by `select` function, lastly, converted entry variable from character to logical variable by `mutate(case_match)` function. There are `1,868` rows and `19` columns.These data are not tidy yet.
 
 2. Answer 3 questions.
 ```{r eval=FALSE}
@@ -56,7 +56,7 @@ entrance_allow = filter(subway_df, vending == "NO") %>%
 
 proportion_entry = entrance_allow / no_vending
 ```
-There are 465 distinct stations and 84 stations are ADA compliant.The proportion of station entrances / exits without vending allow entrance is 43.43%.
+There are `465` distinct stations and `84` stations are ADA compliant.The proportion of station entrances / exits without vending allow entrance is `43.43%`.
 
 3. Reformat data.
 ```{r}
@@ -83,7 +83,7 @@ ada_a_train = filter(reformat_df, ada == TRUE) %>%
   distinct(line) %>% 
   nrow()
 ```
-There are 60 distinct stations serve the A train. There are 17 ADA compliant of the stations that serve the A train.
+There are `60` distinct stations serve the A train. There are `17` ADA compliant of the stations that serve the A train.
 
 
 
@@ -133,7 +133,7 @@ total_number =
   summarise(total_number = sum(cigarette_butts))
 
 ```
-There are total `1,033` observations in the combined dataset, the key variables include date, weight_tons, volume_cubic_yards, plastic_bottles, and wrappers, ect. The total weight of trash collected by Professor Trash Wheel is `246.74` tons. There total number of cigarette butts collected by Gwynda in June of 2022 are `18,120`.
+There are total `1,033` observations in the combined dataset, the key variables include `date`, `weight_tons`, `volume_cubic_yards`, `plastic_bottles`, and `wrappers`, ect. The total weight of trash collected by Professor Trash Wheel is `246.74` tons. There total number of cigarette butts collected by Gwynda in June of 2022 are `18,120`.
 
 
 
@@ -189,9 +189,7 @@ win_table = final %>%
   filter(series %in% c("5", "6", "7", "8", "9", "10")) %>% 
   select(- c(baker_occupation, hometown, signature_bake, show_stopper))
 ```
-The winners have very high technical rank and they usually win the star baker in several episodes in that season.But surprisingly, David, the winner in season 10 never won star baker before. 
-
-
+I kept `series`, `episode`, `baker`, `result`, `technical` and `baker_age` in the table. And we can find the winners have very high technical rank and they usually win the star baker in several episodes in that season.But surprisingly, David, the winner in season 10 never won star baker before. 
 
 ```{r}
 viewers_df = read.csv("./gbb_datasets/viewers.csv",
